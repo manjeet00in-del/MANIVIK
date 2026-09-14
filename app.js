@@ -1,75 +1,45 @@
 /* =========================================================
    MANIVIK
-   AI TRAVEL BACKUP ENGINE
-   Version: 3.0 - ZERO COST PNR MODEL
-
-   Features:
-   - Train Search Demo
-   - Official Railway PNR Redirect
-   - PNR Validation
-   - Alternate Route
-   - Backup Plan
-   - Mobile Menu
-   - Station Swap
-   - Demo Risk Engine
-   - No API Key
-   - No Backend
+   YOUR JOURNEY. OUR BACKUP.
+   Version 3.1
+   ZERO-COST REAL PNR MODEL
    ========================================================= */
 
 "use strict";
 
+
 /* =========================================================
-   GLOBAL STATE
+   MANIVIK STATE
    ========================================================= */
 
 const MANIVIK = {
 
-    demoMode: true,
-
-    currentTab: "search",
-
-    searchData: {
-        from: "",
-        to: "",
-        date: "",
-        class: "SL",
-        passengers: 1
-    },
-
+    from: "",
+    to: "",
+    date: "",
     pnr: "",
 
-    railwayPNRUrl:
+    railwayPNR:
         "https://indianrail.gov.in/enquiry/PNR/PnrEnquiry.html?locale=en"
+
 };
 
 
 /* =========================================================
-   DOM READY
+   PAGE READY
    ========================================================= */
 
 document.addEventListener("DOMContentLoaded", function () {
 
     setMinimumDate();
 
-    initializeTabs();
-
-    initializeMobileMenu();
-
-    initializeSwap();
-
-    initializeSearch();
-
-    initializePNR();
-
-    initializeBackupButtons();
-
-    console.log("MANIVIK initialized successfully.");
+    console.log("MANIVIK loaded successfully.");
 
 });
 
 
 /* =========================================================
-   DATE
+   SET MINIMUM JOURNEY DATE
    ========================================================= */
 
 function setMinimumDate() {
@@ -99,150 +69,33 @@ function setMinimumDate() {
 
 
 /* =========================================================
-   TABS
+   MOBILE MENU
    ========================================================= */
 
-function initializeTabs() {
+function toggleMenu() {
 
-    const tabs =
-        document.querySelectorAll("[data-tab]");
+    const menu =
+        document.getElementById("mobileMenu");
 
-    tabs.forEach(function (tab) {
+    if (!menu) return;
 
-        tab.addEventListener("click", function () {
-
-            const tabName =
-                this.getAttribute("data-tab");
-
-            switchTab(tabName);
-
-        });
-
-    });
-
-}
-
-
-function switchTab(tabName) {
-
-    MANIVIK.currentTab =
-        tabName;
-
-    /* Tab buttons */
-
-    const tabs =
-        document.querySelectorAll("[data-tab]");
-
-    tabs.forEach(function (tab) {
-
-        tab.classList.remove("active");
-
-        if (
-            tab.getAttribute("data-tab")
-            === tabName
-        ) {
-            tab.classList.add("active");
-        }
-
-    });
-
-
-    /* Sections */
-
-    const sections =
-        document.querySelectorAll("[data-section]");
-
-    sections.forEach(function (section) {
-
-        section.classList.remove("active");
-
-        if (
-            section.getAttribute("data-section")
-            === tabName
-        ) {
-            section.classList.add("active");
-        }
-
-    });
-
-
-    /* Common ID fallback */
-
-    const allSections = [
-        "searchSection",
-        "pnrSection",
-        "alternateSection",
-        "backupSection"
-    ];
-
-    allSections.forEach(function (id) {
-
-        const element =
-            document.getElementById(id);
-
-        if (!element) return;
-
-        element.classList.remove("active");
-
-    });
-
-
-    const sectionMap = {
-
-        search: "searchSection",
-
-        pnr: "pnrSection",
-
-        alternate: "alternateSection",
-
-        backup: "backupSection"
-
-    };
-
-
-    const targetId =
-        sectionMap[tabName];
-
-    if (targetId) {
-
-        const target =
-            document.getElementById(targetId);
-
-        if (target) {
-
-            target.classList.add("active");
-
-        }
-
-    }
+    menu.classList.toggle("open");
 
 }
 
 
 /* =========================================================
-   MOBILE MENU
+   CLOSE MOBILE MENU
    ========================================================= */
 
-function initializeMobileMenu() {
+function closeMenu() {
 
-    const menuButton =
-        document.getElementById("menuButton");
-
-    const mobileMenu =
+    const menu =
         document.getElementById("mobileMenu");
 
-    if (!menuButton || !mobileMenu) return;
+    if (!menu) return;
 
-    menuButton.addEventListener(
-        "click",
-        function () {
-
-            mobileMenu.classList.toggle(
-                "open"
-            );
-
-        }
-    );
+    menu.classList.remove("open");
 
 }
 
@@ -251,80 +104,193 @@ function initializeMobileMenu() {
    SWAP FROM / TO
    ========================================================= */
 
-function initializeSwap() {
+function swapStations() {
 
-    const swapButton =
-        document.getElementById("swapStations");
+    const from =
+        document.getElementById("fromStation");
 
-    if (!swapButton) return;
+    const to =
+        document.getElementById("toStation");
 
-    swapButton.addEventListener(
-        "click",
-        function () {
+    if (!from || !to) return;
 
-            const fromInput =
-                document.getElementById("fromStation");
+    const temp =
+        from.value;
 
-            const toInput =
-                document.getElementById("toStation");
+    from.value =
+        to.value;
 
-            if (!fromInput || !toInput)
-                return;
-
-            const temp =
-                fromInput.value;
-
-            fromInput.value =
-                toInput.value;
-
-            toInput.value =
-                temp;
-
-        }
-    );
+    to.value =
+        temp;
 
 }
 
 
 /* =========================================================
-   SEARCH
+   TAB SYSTEM
    ========================================================= */
 
-function initializeSearch() {
+function showTab(tabName, clickedButton) {
 
-    const searchButton =
-        document.getElementById("searchTrains");
+    const tabs = [
+        "search",
+        "pnr",
+        "alternate",
+        "backup"
+    ];
 
-    if (!searchButton) return;
 
-    searchButton.addEventListener(
-        "click",
-        function () {
+    /* Hide all sections */
 
-            searchTrains();
+    tabs.forEach(function (name) {
+
+        const section =
+            document.getElementById(
+                name + "Tab"
+            );
+
+        if (section) {
+
+            section.classList.remove(
+                "active"
+            );
 
         }
-    );
+
+    });
+
+
+    /* Remove active from buttons */
+
+    const tabButtons =
+        document.querySelectorAll(
+            ".tabs .tab"
+        );
+
+    tabButtons.forEach(function (button) {
+
+        button.classList.remove(
+            "active"
+        );
+
+    });
+
+
+    /* Show selected section */
+
+    const selected =
+        document.getElementById(
+            tabName + "Tab"
+        );
+
+    if (selected) {
+
+        selected.classList.add(
+            "active"
+        );
+
+    }
+
+
+    /* Activate clicked button */
+
+    if (clickedButton) {
+
+        clickedButton.classList.add(
+            "active"
+        );
+
+    } else {
+
+        const buttons =
+            document.querySelectorAll(
+                ".tabs .tab"
+            );
+
+        buttons.forEach(function (button) {
+
+            const text =
+                button.textContent
+                    .toLowerCase();
+
+            if (
+                (tabName === "search" &&
+                    text.includes("search")) ||
+
+                (tabName === "pnr" &&
+                    text.includes("pnr")) ||
+
+                (tabName === "alternate" &&
+                    text.includes("alternate")) ||
+
+                (tabName === "backup" &&
+                    text.includes("backup"))
+            ) {
+
+                button.classList.add(
+                    "active"
+                );
+
+            }
+
+        });
+
+    }
+
+
+    closeMenu();
+
+
+    /* Scroll to section */
+
+    if (selected) {
+
+        setTimeout(function () {
+
+            selected.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }, 50);
+
+    }
 
 }
 
 
+/* =========================================================
+   TAB BY ID
+   Used by Mobile Menu
+   ========================================================= */
+
+function showTabById(tabName) {
+
+    showTab(tabName, null);
+
+}
+
+
+/* =========================================================
+   SEARCH TRAINS
+   ========================================================= */
+
 function searchTrains() {
 
     const fromInput =
-        document.getElementById("fromStation");
+        document.getElementById(
+            "fromStation"
+        );
 
     const toInput =
-        document.getElementById("toStation");
+        document.getElementById(
+            "toStation"
+        );
 
     const dateInput =
-        document.getElementById("journeyDate");
-
-    const classInput =
-        document.getElementById("travelClass");
-
-    const passengerInput =
-        document.getElementById("passengers");
+        document.getElementById(
+            "journeyDate"
+        );
 
 
     const from =
@@ -342,21 +308,24 @@ function searchTrains() {
             ? dateInput.value
             : "";
 
-    const travelClass =
-        classInput
-            ? classInput.value
-            : "SL";
 
-    const passengers =
-        passengerInput
-            ? passengerInput.value
-            : 1;
+    /* Validation */
+
+    if (!from) {
+
+        showSearchMessage(
+            "Please enter your departure station."
+        );
+
+        return;
+
+    }
 
 
-    if (!from || !to) {
+    if (!to) {
 
-        showSearchError(
-            "Please enter both From and To stations."
+        showSearchMessage(
+            "Please enter your destination station."
         );
 
         return;
@@ -366,7 +335,7 @@ function searchTrains() {
 
     if (!date) {
 
-        showSearchError(
+        showSearchMessage(
             "Please select your journey date."
         );
 
@@ -377,10 +346,11 @@ function searchTrains() {
 
     if (
         from.toLowerCase()
-        === to.toLowerCase()
+        ===
+        to.toLowerCase()
     ) {
 
-        showSearchError(
+        showSearchMessage(
             "From and To stations cannot be the same."
         );
 
@@ -389,23 +359,56 @@ function searchTrains() {
     }
 
 
-    MANIVIK.searchData = {
+    MANIVIK.from =
+        from;
 
-        from,
-        to,
-        date,
-        class: travelClass,
-        passengers
+    MANIVIK.to =
+        to;
 
-    };
+    MANIVIK.date =
+        date;
 
 
-    showSearchLoading();
+    /* Open Search tab */
 
+    showTabById("search");
+
+
+    /* Loading */
+
+    const results =
+        document.getElementById(
+            "trainResults"
+        );
+
+    if (!results) return;
+
+
+    results.innerHTML = `
+
+        <div class="loading-card">
+
+            <div class="loader"></div>
+
+            <h3>
+                Searching your journey...
+            </h3>
+
+            <p>
+                MANIVIK is preparing available
+                travel options.
+            </p>
+
+        </div>
+
+    `;
+
+
+    /* Demo search result */
 
     setTimeout(function () {
 
-        showDemoTrainResults();
+        showTrainResults();
 
     }, 700);
 
@@ -413,95 +416,49 @@ function searchTrains() {
 
 
 /* =========================================================
-   SEARCH LOADING
+   TRAIN RESULTS
    ========================================================= */
 
-function showSearchLoading() {
+function showTrainResults() {
 
-    const result =
-        getElement(
-            [
-                "searchResults",
-                "trainResults",
-                "results"
-            ]
+    const results =
+        document.getElementById(
+            "trainResults"
         );
 
-    if (!result) return;
-
-    result.innerHTML = `
-
-        <div class="loading-card">
-
-            <div class="loader"></div>
-
-            <h3>
-                Searching trains...
-            </h3>
-
-            <p>
-                MANIVIK is checking available
-                journey options.
-            </p>
-
-        </div>
-
-    `;
-
-}
+    if (!results) return;
 
 
-/* =========================================================
-   DEMO TRAIN RESULTS
-   ========================================================= */
-
-function showDemoTrainResults() {
-
-    const result =
-        getElement(
-            [
-                "searchResults",
-                "trainResults",
-                "results"
-            ]
-        );
-
-    if (!result) return;
-
-
-    const from =
-        escapeHTML(
-            MANIVIK.searchData.from
-        );
-
-    const to =
-        escapeHTML(
-            MANIVIK.searchData.to
-        );
-
-
-    result.innerHTML = `
+    results.innerHTML = `
 
         <div class="result-header">
 
             <div>
 
                 <span class="result-label">
-                    MANIVIK Search
+                    JOURNEY SEARCH
                 </span>
 
                 <h3>
-                    ${from} → ${to}
+                    ${escapeHTML(MANIVIK.from)}
+                    →
+                    ${escapeHTML(MANIVIK.to)}
                 </h3>
+
+                <p>
+                    ${formatDate(MANIVIK.date)}
+                </p>
 
             </div>
 
-            <span class="demo-badge">
-                Preview
+            <span class="live-badge">
+                PREVIEW
             </span>
 
         </div>
 
+
+        <!-- TRAIN 1 -->
 
         <div class="train-card">
 
@@ -525,9 +482,7 @@ function showDemoTrainResults() {
                         06:30
                     </strong>
 
-                    <span>
-                        →
-                    </span>
+                    <span>→</span>
 
                     <strong>
                         11:20
@@ -549,7 +504,7 @@ function showDemoTrainResults() {
                 </span>
 
                 <span>
-                    💺 SL
+                    💺 Sleeper
                 </span>
 
             </div>
@@ -558,11 +513,11 @@ function showDemoTrainResults() {
             <div class="availability">
 
                 <span class="availability-good">
-                    Available / Check
+                    Check Availability
                 </span>
 
                 <strong>
-                    ₹850
+                    ₹850+
                 </strong>
 
             </div>
@@ -572,18 +527,102 @@ function showDemoTrainResults() {
 
                 <button
                     class="primary-btn"
-                    onclick="openBackupFromSearch()">
-
+                    onclick="generateBackup()"
+                >
                     🛟 Backup Plan
-
                 </button>
 
                 <button
                     class="secondary-btn"
-                    onclick="openPNRTab()">
-
+                    onclick="showTabById('pnr')"
+                >
                     🎫 Check PNR
+                </button>
 
+            </div>
+
+        </div>
+
+
+        <!-- TRAIN 2 -->
+
+        <div class="train-card">
+
+            <div class="train-main">
+
+                <div>
+
+                    <strong>
+                        12560
+                    </strong>
+
+                    <h3>
+                        Shiv Ganga Express
+                    </h3>
+
+                </div>
+
+                <div class="train-timing">
+
+                    <strong>
+                        21:15
+                    </strong>
+
+                    <span>→</span>
+
+                    <strong>
+                        18:30
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="train-info">
+
+                <span>
+                    🚆 Express
+                </span>
+
+                <span>
+                    ⏱ 21h 15m
+                </span>
+
+                <span>
+                    💺 3A
+                </span>
+
+            </div>
+
+
+            <div class="availability">
+
+                <span class="availability-good">
+                    Check Availability
+                </span>
+
+                <strong>
+                    ₹1,450+
+                </strong>
+
+            </div>
+
+
+            <div class="train-actions">
+
+                <button
+                    class="primary-btn"
+                    onclick="generateBackup()"
+                >
+                    🛟 Backup Plan
+                </button>
+
+                <button
+                    class="secondary-btn"
+                    onclick="loadAlternates()"
+                >
+                    🔄 Alternate
                 </button>
 
             </div>
@@ -593,11 +632,9 @@ function showDemoTrainResults() {
 
         <div class="info-note">
 
-            ℹ️ Train availability shown here is
-            currently a MANIVIK preview.
-            Real railway availability will be
-            connected later through an authorised
-            data provider.
+            ℹ️ These train results are currently
+            a MANIVIK preview. Live railway
+            availability will be connected later.
 
         </div>
 
@@ -607,83 +644,96 @@ function showDemoTrainResults() {
 
 
 /* =========================================================
-   PNR INITIALIZATION
+   SEARCH MESSAGE
    ========================================================= */
 
-function initializePNR() {
+function showSearchMessage(message) {
 
-    const button =
-        document.getElementById("checkPNR");
-
-    if (button) {
-
-        button.addEventListener(
-            "click",
-            checkPNR
+    const results =
+        document.getElementById(
+            "trainResults"
         );
 
-    }
+    if (!results) {
 
-
-    /* Support common alternative IDs */
-
-    const alternateButton =
-        document.getElementById("checkPnrButton");
-
-    if (
-        alternateButton
-        &&
-        alternateButton !== button
-    ) {
-
-        alternateButton.addEventListener(
-            "click",
-            checkPNR
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   REAL PNR - ZERO COST
-   ========================================================= */
-
-function checkPNR() {
-
-    const input =
-        getElement(
-            [
-                "pnrInput",
-                "pnrNumber",
-                "pnr"
-            ]
-        );
-
-
-    if (!input) {
-
-        alert(
-            "PNR input field not found."
-        );
+        alert(message);
 
         return;
 
     }
 
 
+    results.innerHTML = `
+
+        <div class="error-card">
+
+            <div class="error-icon">
+                ⚠️
+            </div>
+
+            <h3>
+                Journey Details Required
+            </h3>
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   PNR CHECK
+   ========================================================= */
+
+function checkPNR() {
+
+    const input =
+        document.getElementById(
+            "pnrInput"
+        );
+
+    const result =
+        document.getElementById(
+            "pnrResult"
+        );
+
+
+    if (!input || !result) return;
+
+
     const pnr =
         input.value.trim();
 
 
-    /* 10 digit validation */
+    /* Validate */
 
     if (!/^\d{10}$/.test(pnr)) {
 
-        showPNRError(
-            "Please enter a valid 10-digit PNR number."
-        );
+        result.innerHTML = `
+
+            <div class="error-card">
+
+                <div class="error-icon">
+                    ⚠️
+                </div>
+
+                <h3>
+                    Invalid PNR
+                </h3>
+
+                <p>
+                    Please enter a valid
+                    10-digit PNR number.
+                </p>
+
+            </div>
+
+        `;
 
         return;
 
@@ -694,35 +744,7 @@ function checkPNR() {
         pnr;
 
 
-    showPNRReady(pnr);
-
-}
-
-
-/* =========================================================
-   PNR READY SCREEN
-   ========================================================= */
-
-function showPNRReady(pnr) {
-
-    const result =
-        getElement(
-            [
-                "pnrResult",
-                "pnrResults",
-                "pnr-result"
-            ]
-        );
-
-
-    if (!result) {
-
-        openRailwayPNR();
-
-        return;
-
-    }
-
+    /* Show zero-cost PNR option */
 
     result.innerHTML = `
 
@@ -732,13 +754,16 @@ function showPNRReady(pnr) {
                 🚆
             </div>
 
+
             <span class="result-label">
                 MANIVIK PNR CHECK
             </span>
 
+
             <h3>
                 PNR Ready
             </h3>
+
 
             <p>
                 PNR
@@ -746,31 +771,35 @@ function showPNRReady(pnr) {
                 is ready to check.
             </p>
 
+
             <div class="pnr-official-note">
 
-                🔒 Your PNR is not stored by MANIVIK.
-                You will check the live status directly
-                on the official Indian Railways website.
+                🔒 MANIVIK does not collect
+                or store your railway PNR.
+
+                <br><br>
+
+                Your live status will be checked
+                directly on the official
+                Indian Railways website.
 
             </div>
 
 
             <button
                 class="primary-btn"
-                onclick="openRailwayPNR()">
-
+                onclick="openRailwayPNR()"
+            >
                 🚆 Check Live PNR
                 on Indian Railways
-
             </button>
 
 
             <button
                 class="secondary-btn"
-                onclick="showBackupOptions()">
-
+                onclick="generateBackup()"
+            >
                 🛟 Find Backup Plan
-
             </button>
 
         </div>
@@ -787,13 +816,13 @@ function showPNRReady(pnr) {
 
 
 /* =========================================================
-   OPEN OFFICIAL RAILWAY WEBSITE
+   OPEN OFFICIAL INDIAN RAILWAYS PNR
    ========================================================= */
 
 function openRailwayPNR() {
 
     window.open(
-        MANIVIK.railwayPNRUrl,
+        MANIVIK.railwayPNR,
         "_blank",
         "noopener,noreferrer"
     );
@@ -802,191 +831,53 @@ function openRailwayPNR() {
 
 
 /* =========================================================
-   BACKUP OPTIONS
+   ALTERNATE ROUTES
    ========================================================= */
 
-function showBackupOptions() {
+function loadAlternates() {
 
-    const result =
-        getElement(
-            [
-                "pnrResult",
-                "pnrResults",
-                "pnr-result"
-            ]
+    showTabById("alternate");
+
+
+    const results =
+        document.getElementById(
+            "alternateResults"
         );
 
-
-    if (!result) return;
-
-
-    result.innerHTML = `
-
-        <div class="backup-intro">
-
-            <div class="backup-icon">
-                🛟
-            </div>
-
-            <span class="result-label">
-                MANIVIK
-            </span>
-
-            <h3>
-                Your Journey Needs a Backup?
-            </h3>
-
-            <p>
-
-                If your railway ticket is not confirmed,
-                MANIVIK can help you explore another
-                journey option.
-
-            </p>
-
-
-            <div class="backup-options">
-
-                <button
-                    class="backup-action"
-                    onclick="activateAlternateRoute()">
-
-                    🔄
-                    <span>
-                        Alternate Route
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="backup-action"
-                    onclick="activateTrainSearch()">
-
-                    🚆
-                    <span>
-                        Search Another Train
-                    </span>
-
-                </button>
-
-
-                <button
-                    class="backup-action"
-                    onclick="activateBackupPlan()">
-
-                    🛟
-                    <span>
-                        Create Backup Plan
-                    </span>
-
-                </button>
-
-            </div>
-
-
-            <button
-                class="secondary-btn"
-                onclick="openRailwayPNR()">
-
-                Check Railway PNR Again
-
-            </button>
-
-        </div>
-
-    `;
-
-
-    result.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-
-}
-
-
-/* =========================================================
-   ALTERNATE ROUTE
-   ========================================================= */
-
-function activateAlternateRoute() {
-
-    switchTab("alternate");
-
-
-    const section =
-        getElement(
-            [
-                "alternateSection",
-                "alternate"
-            ]
-        );
-
-
-    if (section) {
-
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }
-
-
-    showDemoAlternateRoutes();
-
-}
-
-
-/* =========================================================
-   DEMO ALTERNATE ROUTES
-   ========================================================= */
-
-function showDemoAlternateRoutes() {
-
-    const result =
-        getElement(
-            [
-                "alternateResults",
-                "alternateResult",
-                "alternate-results"
-            ]
-        );
-
-
-    if (!result) return;
+    if (!results) return;
 
 
     const from =
-        escapeHTML(
-            MANIVIK.searchData.from
-            || "Lucknow"
-        );
+        MANIVIK.from
+        || "Lucknow";
 
 
     const to =
-        escapeHTML(
-            MANIVIK.searchData.to
-            || "Puri"
-        );
+        MANIVIK.to
+        || "Puri";
 
 
-    result.innerHTML = `
+    results.innerHTML = `
 
-        <div class="alternate-header">
+        <div class="result-header">
 
-            <span class="result-label">
-                MANIVIK BACKUP ENGINE
-            </span>
+            <div>
 
-            <h3>
-                Alternative Journey Options
-            </h3>
+                <span class="result-label">
+                    MANIVIK BACKUP ENGINE
+                </span>
 
-            <p>
-                ${from} → ${to}
-            </p>
+                <h3>
+                    Alternate Journey Options
+                </h3>
+
+                <p>
+                    ${escapeHTML(from)}
+                    →
+                    ${escapeHTML(to)}
+                </p>
+
+            </div>
 
         </div>
 
@@ -1000,7 +891,7 @@ function showDemoAlternateRoutes() {
             <div class="route-content">
 
                 <h3>
-                    Best Confirmation Chance
+                    Best Chance
                 </h3>
 
                 <p>
@@ -1008,7 +899,7 @@ function showDemoAlternateRoutes() {
                 </p>
 
                 <strong>
-                    Estimated 91%
+                    High availability potential
                 </strong>
 
             </div>
@@ -1029,15 +920,15 @@ function showDemoAlternateRoutes() {
             <div class="route-content">
 
                 <h3>
-                    Cheapest Backup
+                    Budget Option
                 </h3>
 
                 <p>
-                    Lower-cost alternative journey
+                    Lower-cost alternate journey
                 </p>
 
                 <strong>
-                    Estimated 84%
+                    Value focused
                 </strong>
 
             </div>
@@ -1058,15 +949,15 @@ function showDemoAlternateRoutes() {
             <div class="route-content">
 
                 <h3>
-                    Fastest Backup
+                    Fastest Option
                 </h3>
 
                 <p>
-                    Faster alternate connection
+                    Prioritises travel time
                 </p>
 
                 <strong>
-                    Estimated 97%
+                    Time focused
                 </strong>
 
             </div>
@@ -1080,9 +971,8 @@ function showDemoAlternateRoutes() {
 
         <div class="info-note">
 
-            ⚠️ These recommendations are currently
-            demonstration data. Real availability
-            will be added later.
+            ℹ️ MANIVIK will connect real train
+            availability here in a future version.
 
         </div>
 
@@ -1092,106 +982,23 @@ function showDemoAlternateRoutes() {
 
 
 /* =========================================================
-   TRAIN SEARCH
-   ========================================================= */
-
-function activateTrainSearch() {
-
-    switchTab("search");
-
-
-    const section =
-        getElement(
-            [
-                "searchSection",
-                "search"
-            ]
-        );
-
-
-    if (section) {
-
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    }
-
-}
-
-
-/* =========================================================
    BACKUP PLAN
    ========================================================= */
 
-function activateBackupPlan() {
+function generateBackup() {
 
-    switchTab("backup");
+    showTabById("backup");
 
 
-    const section =
-        getElement(
-            [
-                "backupSection",
-                "backup"
-            ]
+    const results =
+        document.getElementById(
+            "backupResults"
         );
 
-
-    if (section) {
-
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }
+    if (!results) return;
 
 
-    showDemoBackupPlan();
-
-}
-
-
-/* =========================================================
-   DEMO BACKUP PLAN
-   ========================================================= */
-
-function showDemoBackupPlan() {
-
-    const result =
-        getElement(
-            [
-                "backupResults",
-                "backupResult",
-                "backup-results"
-            ]
-        );
-
-
-    if (!result) return;
-
-
-    result.innerHTML = `
-
-        <div class="backup-plan-header">
-
-            <span class="result-label">
-                MANIVIK BACKUP PLAN
-            </span>
-
-            <h3>
-                Don't depend on one ticket.
-            </h3>
-
-            <p>
-                Compare your backup options
-                before your journey.
-            </p>
-
-        </div>
-
+    results.innerHTML = `
 
         <div class="backup-plan-card recommended">
 
@@ -1202,34 +1009,36 @@ function showDemoBackupPlan() {
                 </span>
 
                 <span class="risk-score">
-                    91%
+                    BACKUP A
                 </span>
 
             </div>
 
 
             <h3>
-                Option A — Best Chance
+                Best Journey Backup
             </h3>
 
+
             <p>
-                Higher confirmation probability
-                with balanced price and journey time.
+                Choose another train or alternate
+                route instead of depending only
+                on your uncertain ticket.
             </p>
 
 
             <div class="backup-details">
 
                 <span>
-                    💰 ₹1,050
+                    🚆 Alternate Train
                 </span>
 
                 <span>
-                    ⏱ 29h
+                    💰 Compare Fare
                 </span>
 
                 <span>
-                    🔄 1 Change
+                    ⏱ Compare Time
                 </span>
 
             </div>
@@ -1237,10 +1046,9 @@ function showDemoBackupPlan() {
 
             <button
                 class="primary-btn"
-                onclick="activateTrainSearch()">
-
-                Explore Option
-
+                onclick="loadAlternates()"
+            >
+                🔄 Explore Alternatives
             </button>
 
         </div>
@@ -1251,49 +1059,32 @@ function showDemoBackupPlan() {
             <div class="backup-top">
 
                 <span>
-                    💰 Cheapest
+                    💰 Budget
                 </span>
 
                 <span class="risk-score">
-                    84%
+                    OPTION B
                 </span>
 
             </div>
 
 
             <h3>
-                Option B — Budget
+                Cheapest Backup
             </h3>
 
+
             <p>
-                Lower cost alternative
-                for flexible travellers.
+                Look for another train, nearby station
+                or different travel combination.
             </p>
-
-
-            <div class="backup-details">
-
-                <span>
-                    💰 ₹720
-                </span>
-
-                <span>
-                    ⏱ 34h
-                </span>
-
-                <span>
-                    🔄 2 Changes
-                </span>
-
-            </div>
 
 
             <button
                 class="secondary-btn"
-                onclick="activateTrainSearch()">
-
-                Explore Option
-
+                onclick="searchTrains()"
+            >
+                🔎 Search Journey
             </button>
 
         </div>
@@ -1304,49 +1095,32 @@ function showDemoBackupPlan() {
             <div class="backup-top">
 
                 <span>
-                    ⚡ Fastest
+                    ⚡ Fast
                 </span>
 
                 <span class="risk-score">
-                    97%
+                    OPTION C
                 </span>
 
             </div>
 
 
             <h3>
-                Option C — Fastest
+                Fastest Backup
             </h3>
 
+
             <p>
-                Prioritises journey time
-                over price.
+                Prioritise travel time when your
+                journey date is close.
             </p>
-
-
-            <div class="backup-details">
-
-                <span>
-                    💰 ₹1,850
-                </span>
-
-                <span>
-                    ⏱ 20h
-                </span>
-
-                <span>
-                    🔄 1 Change
-                </span>
-
-            </div>
 
 
             <button
                 class="secondary-btn"
-                onclick="activateTrainSearch()">
-
-                Explore Option
-
+                onclick="loadAlternates()"
+            >
+                🔄 Find Another Route
             </button>
 
         </div>
@@ -1354,188 +1128,14 @@ function showDemoBackupPlan() {
 
         <div class="info-note">
 
-            ℹ️ Confirmation percentages shown above
-            are demonstration values only.
-            MANIVIK will not present them as
-            real predictions until reliable
-            railway data is connected.
+            ⚠️ MANIVIK does not currently claim
+            these options are live railway
+            availability. This is the MVP
+            backup-planning engine.
 
         </div>
 
     `;
-
-}
-
-
-/* =========================================================
-   PNR ERROR
-   ========================================================= */
-
-function showPNRError(message) {
-
-    const result =
-        getElement(
-            [
-                "pnrResult",
-                "pnrResults",
-                "pnr-result"
-            ]
-        );
-
-
-    if (!result) {
-
-        alert(message);
-
-        return;
-
-    }
-
-
-    result.innerHTML = `
-
-        <div class="error-card">
-
-            <div class="error-icon">
-                ⚠️
-            </div>
-
-            <h3>
-                Invalid PNR
-            </h3>
-
-            <p>
-                ${escapeHTML(message)}
-            </p>
-
-        </div>
-
-    `;
-
-
-    result.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-    });
-
-}
-
-
-/* =========================================================
-   SEARCH ERROR
-   ========================================================= */
-
-function showSearchError(message) {
-
-    const result =
-        getElement(
-            [
-                "searchResults",
-                "trainResults",
-                "results"
-            ]
-        );
-
-
-    if (!result) {
-
-        alert(message);
-
-        return;
-
-    }
-
-
-    result.innerHTML = `
-
-        <div class="error-card">
-
-            <div class="error-icon">
-                ⚠️
-            </div>
-
-            <h3>
-                Search Required
-            </h3>
-
-            <p>
-                ${escapeHTML(message)}
-            </p>
-
-        </div>
-
-    `;
-
-}
-
-
-/* =========================================================
-   OPEN PNR TAB
-   ========================================================= */
-
-function openPNRTab() {
-
-    switchTab("pnr");
-
-
-    const section =
-        getElement(
-            [
-                "pnrSection",
-                "pnr"
-            ]
-        );
-
-
-    if (section) {
-
-        section.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }
-
-}
-
-
-/* =========================================================
-   OPEN BACKUP FROM SEARCH
-   ========================================================= */
-
-function openBackupFromSearch() {
-
-    activateBackupPlan();
-
-}
-
-
-/* =========================================================
-   GENERIC ELEMENT FINDER
-   ========================================================= */
-
-function getElement(ids) {
-
-    for (
-        let i = 0;
-        i < ids.length;
-        i++
-    ) {
-
-        const element =
-            document.getElementById(
-                ids[i]
-            );
-
-        if (element) {
-
-            return element;
-
-        }
-
-    }
-
-    return null;
 
 }
 
@@ -1548,170 +1148,117 @@ function escapeHTML(value) {
 
     return String(value)
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        .replace(/&/g, "&amp;")
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+        .replace(/</g, "&lt;")
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        .replace(/>/g, "&gt;")
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+        .replace(/"/g, "&quot;")
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/'/g, "&#039;");
 
 }
 
 
 /* =========================================================
-   FUTURE API PLACEHOLDER
-   =========================================================
-   IMPORTANT:
-
-   Currently NOT USED.
-
-   Later, if MANIVIK gets a railway data provider,
-   only this layer needs to be connected.
-
-   Frontend API keys should NEVER be stored here.
+   DATE FORMAT
    ========================================================= */
 
-async function apiRequest(
-    endpoint,
-    options = {}
-) {
+function formatDate(dateString) {
 
-    const API_BASE_URL = "/api";
+    if (!dateString) {
 
-    try {
+        return "";
 
-        const response =
-            await fetch(
-                API_BASE_URL + endpoint,
-                {
-                    ...options,
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-                        ...(options.headers || {})
-                    }
-                }
+    }
+
+
+    const date =
+        new Date(
+            dateString + "T00:00:00"
+        );
+
+
+    if (isNaN(date.getTime())) {
+
+        return dateString;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLOSE MOBILE MENU WHEN CLICKING OUTSIDE
+   ========================================================= */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const menu =
+            document.getElementById(
+                "mobileMenu"
+            );
+
+        const button =
+            document.querySelector(
+                ".menu-btn"
             );
 
 
-        if (!response.ok) {
+        if (!menu || !button) return;
 
-            throw new Error(
-                "API request failed"
+
+        if (
+            menu.classList.contains("open")
+            &&
+            !menu.contains(event.target)
+            &&
+            !button.contains(event.target)
+        ) {
+
+            menu.classList.remove(
+                "open"
             );
 
         }
 
-
-        return await response.json();
-
-    } catch (error) {
-
-        console.error(
-            "MANIVIK API Error:",
-            error
-        );
-
-        throw error;
-
     }
-
-}
-
-
-/* =========================================================
-   FUTURE API FUNCTIONS
-   ========================================================= */
-
-async function getPNRStatus(pnr) {
-
-    return apiRequest(
-        `/pnr/${encodeURIComponent(pnr)}`
-    );
-
-}
-
-
-async function getTrainAvailability(
-    from,
-    to,
-    date,
-    trainNumber
-) {
-
-    const query =
-        new URLSearchParams({
-
-            from,
-            to,
-            date,
-            trainNumber
-
-        });
-
-
-    return apiRequest(
-        `/availability?${query.toString()}`
-    );
-
-}
-
-
-async function getTrainSchedule(
-    trainNumber
-) {
-
-    return apiRequest(
-        `/schedule/${encodeURIComponent(trainNumber)}`
-    );
-
-}
-
-
-async function getLiveTrainStatus(
-    trainNumber,
-    date
-) {
-
-    const query =
-        new URLSearchParams({
-
-            trainNumber,
-            date
-
-        });
-
-
-    return apiRequest(
-        `/running-status?${query.toString()}`
-    );
-
-}
+);
 
 
 /* =========================================================
    GLOBAL FUNCTIONS
    =========================================================
-   These make onclick="" buttons work.
+   Required because HTML uses onclick=""
    ========================================================= */
+
+window.toggleMenu =
+    toggleMenu;
+
+window.showTab =
+    showTab;
+
+window.showTabById =
+    showTabById;
+
+window.swapStations =
+    swapStations;
+
+window.searchTrains =
+    searchTrains;
 
 window.checkPNR =
     checkPNR;
@@ -1719,45 +1266,25 @@ window.checkPNR =
 window.openRailwayPNR =
     openRailwayPNR;
 
-window.showBackupOptions =
-    showBackupOptions;
+window.loadAlternates =
+    loadAlternates;
 
-window.activateAlternateRoute =
-    activateAlternateRoute;
-
-window.activateTrainSearch =
-    activateTrainSearch;
-
-window.activateBackupPlan =
-    activateBackupPlan;
-
-window.openPNRTab =
-    openPNRTab;
-
-window.openBackupFromSearch =
-    openBackupFromSearch;
-
-window.searchTrains =
-    searchTrains;
+window.generateBackup =
+    generateBackup;
 
 
 /* =========================================================
-   MANIVIK READY
+   READY
    ========================================================= */
 
 console.log(
-    "🚆 MANIVIK - AI Travel Backup Engine"
+    "🚆 MANIVIK is ready."
 );
 
 console.log(
-    "Mode: ZERO COST PNR MODEL"
+    "PNR Mode: ZERO COST"
 );
 
 console.log(
-    "Railway API: Not connected"
-);
-
-console.log(
-    "Official Railway PNR:",
-    MANIVIK.railwayPNRUrl
+    "Railway API: NOT REQUIRED"
 );
