@@ -1,915 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>MANIVIK — Your Journey. Our Backup.</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
+  <title>MANIVIK — Your Journey. Our Backup.</title>
+  <meta
+    name="description"
+    content="MANIVIK is an AI Travel Backup Engine for train journeys, PNR tracking, confirmation prediction and alternate travel plans."
+  />
 
-:root{
- --bg:#f5f7fb;
- --card:#fff;
- --text:#172033;
- --muted:#687386;
- --primary:#2457ff;
- --primary2:#173fc2;
- --green:#13a66a;
- --orange:#f59e0b;
- --red:#ef4444;
- --border:#e6e9ef;
-}
-
-body{
- font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
- background:var(--bg);
- color:var(--text);
-}
-
-header{
- background:linear-gradient(135deg,#101c46,#2457ff);
- color:#fff;
- padding:18px 18px 32px;
- border-radius:0 0 28px 28px;
-}
-
-.nav{
- max-width:1100px;
- margin:auto;
- display:flex;
- justify-content:space-between;
- align-items:center;
-}
-
-.logo{
- font-size:25px;
- font-weight:900;
- letter-spacing:1px;
-}
-
-.logo span{
- font-size:11px;
- display:block;
- opacity:.75;
- letter-spacing:.5px;
-}
-
-.menu{
- background:rgba(255,255,255,.13);
- border:1px solid rgba(255,255,255,.2);
- color:#fff;
- padding:9px 12px;
- border-radius:10px;
-}
-
-.hero{
- max-width:1100px;
- margin:35px auto 0;
-}
-
-.hero h1{
- font-size:34px;
- line-height:1.12;
- max-width:650px;
-}
-
-.hero p{
- margin-top:12px;
- opacity:.82;
- max-width:600px;
-}
-
-.container{
- max-width:1100px;
- margin:-15px auto 40px;
- padding:0 15px;
- position:relative;
-}
-
-.tabs{
- display:grid;
- grid-template-columns:repeat(4,1fr);
- gap:8px;
- background:var(--card);
- padding:8px;
- border-radius:17px;
- box-shadow:0 10px 30px rgba(20,35,70,.12);
-}
-
-.tab{
- border:0;
- background:transparent;
- padding:13px 7px;
- border-radius:12px;
- font-weight:700;
- color:var(--muted);
- cursor:pointer;
-}
-
-.tab.active{
- background:#edf2ff;
- color:var(--primary);
-}
-
-.panel{
- display:none;
- margin-top:18px;
-}
-
-.panel.active{display:block}
-
-.card{
- background:var(--card);
- border:1px solid var(--border);
- border-radius:20px;
- padding:20px;
- margin-bottom:16px;
- box-shadow:0 5px 20px rgba(30,40,70,.05);
-}
-
-.card h2{
- font-size:20px;
- margin-bottom:5px;
-}
-
-.sub{
- color:var(--muted);
- font-size:14px;
- margin-bottom:18px;
-}
-
-.form-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:12px;
-}
-
-input,select{
- width:100%;
- padding:14px;
- border:1px solid var(--border);
- border-radius:12px;
- outline:none;
- background:#fff;
- font-size:15px;
-}
-
-input:focus,select:focus{
- border-color:var(--primary);
-}
-
-.btn{
- border:0;
- background:var(--primary);
- color:#fff;
- width:100%;
- padding:14px;
- border-radius:12px;
- font-size:15px;
- font-weight:800;
- cursor:pointer;
- margin-top:14px;
-}
-
-.btn:hover{background:var(--primary2)}
-
-.result{
- margin-top:18px;
- display:none;
-}
-
-.train{
- border:1px solid var(--border);
- padding:16px;
- border-radius:16px;
- margin-top:12px;
-}
-
-.train-top{
- display:flex;
- justify-content:space-between;
- gap:10px;
-}
-
-.train-name{
- font-weight:800;
-}
-
-.badge{
- padding:5px 9px;
- border-radius:20px;
- font-size:11px;
- font-weight:800;
- background:#eaf8f1;
- color:var(--green);
- white-space:nowrap;
-}
-
-.route{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin:17px 0;
-}
-
-.station{
- font-size:18px;
- font-weight:900;
-}
-
-.time{
- color:var(--muted);
- font-size:12px;
-}
-
-.line{
- flex:1;
- height:2px;
- background:#dfe4ed;
- margin:0 15px;
-}
-
-.stats{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:8px;
-}
-
-.stat{
- background:#f7f8fb;
- padding:10px;
- border-radius:10px;
- text-align:center;
-}
-
-.stat b{
- display:block;
- font-size:14px;
-}
-
-.stat span{
- color:var(--muted);
- font-size:11px;
-}
-
-.pnr-box{
- text-align:center;
- padding:10px;
-}
-
-.pnr-number{
- font-size:26px;
- font-weight:900;
- letter-spacing:2px;
-}
-
-.chance{
- margin:20px auto;
- width:190px;
- height:190px;
- border-radius:50%;
- display:flex;
- flex-direction:column;
- justify-content:center;
- align-items:center;
- border:14px solid #f59e0b;
- background:#fff;
-}
-
-.chance strong{
- font-size:42px;
-}
-
-.chance span{
- font-size:12px;
- color:var(--muted);
-}
-
-.warning{
- padding:13px;
- border-radius:12px;
- background:#fff7e6;
- color:#925b00;
- font-size:13px;
- margin-top:15px;
-}
-
-.recommend{
- padding:15px;
- background:#edf9f3;
- border-radius:14px;
- color:#08774b;
- font-weight:700;
- margin-top:15px;
-}
-
-.option{
- border:1px solid var(--border);
- border-radius:15px;
- padding:16px;
- margin-top:12px;
-}
-
-.option.recommended{
- border:2px solid var(--green);
-}
-
-.option-head{
- display:flex;
- justify-content:space-between;
- gap:10px;
-}
-
-.option h3{
- font-size:16px;
-}
-
-.score{
- color:var(--green);
- font-weight:900;
-}
-
-.option p{
- color:var(--muted);
- font-size:13px;
- margin-top:6px;
-}
-
-.option-bottom{
- display:flex;
- justify-content:space-between;
- margin-top:13px;
- font-size:13px;
-}
-
-.feature-grid{
- display:grid;
- grid-template-columns:repeat(2,1fr);
- gap:12px;
-}
-
-.feature{
- padding:17px;
- background:#f8f9fc;
- border-radius:15px;
-}
-
-.feature-icon{
- font-size:27px;
-}
-
-.feature h3{
- margin-top:8px;
- font-size:15px;
-}
-
-.feature p{
- margin-top:5px;
- color:var(--muted);
- font-size:12px;
- line-height:1.5;
-}
-
-.empty{
- text-align:center;
- color:var(--muted);
- padding:25px;
-}
-
-footer{
- text-align:center;
- padding:30px 15px;
- color:var(--muted);
- font-size:12px;
-}
-
-@media(max-width:650px){
- .hero h1{font-size:29px}
- .tabs{
-  grid-template-columns:repeat(2,1fr);
- }
- .form-grid{
-  grid-template-columns:1fr;
- }
- .stats{
-  grid-template-columns:1fr 1fr 1fr;
- }
-}
-
-@media(max-width:400px){
- .stats{
-  grid-template-columns:1fr;
- }
-}
-</style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-<header>
- <div class="nav">
-  <div class="logo">
-   MANIVIK
-   <span>YOUR JOURNEY. OUR BACKUP.</span>
-  </div>
-  <button class="menu">☰</button>
- </div>
+  <!-- ================= HEADER ================= -->
 
- <div class="hero">
-  <h1>Don't let a waiting ticket stop your journey.</h1>
-  <p>
-   Check trains, track your PNR, estimate confirmation chances
-   and discover smarter backup routes.
-  </p>
- </div>
-</header>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">M</div>
 
-<main class="container">
-
- <div class="tabs">
-
-  <button class="tab active" onclick="showPanel('search',this)">
-   🔎 Search Train
-  </button>
-
-  <button class="tab" onclick="showPanel('pnr',this)">
-   🎫 PNR Status
-  </button>
-
-  <button class="tab" onclick="showPanel('alternate',this)">
-   🔄 Alternate
-  </button>
-
-  <button class="tab" onclick="showPanel('backup',this)">
-   🛟 Backup Plan
-  </button>
-
- </div>
-
- <!-- SEARCH TRAIN -->
- <section id="search" class="panel active">
-
-  <div class="card">
-   <h2>Search Trains</h2>
-   <p class="sub">
-    Find trains between any two stations.
-   </p>
-
-   <div class="form-grid">
-    <input id="from" placeholder="From — e.g. Lucknow">
-    <input id="to" placeholder="To — e.g. Puri">
-    <input id="date" type="date">
-    <select id="class">
-     <option>All Classes</option>
-     <option>Sleeper</option>
-     <option>3A</option>
-     <option>2A</option>
-     <option>1A</option>
-    </select>
-   </div>
-
-   <button class="btn" onclick="searchTrain()">
-    Search Trains
-   </button>
-
-   <div id="trainResults" class="result"></div>
-  </div>
-
- </section>
-
- <!-- PNR -->
- <section id="pnr" class="panel">
-
-  <div class="card">
-
-   <h2>Check PNR Status</h2>
-   <p class="sub">
-    Enter your 10-digit PNR number.
-   </p>
-
-   <input
-    id="pnrInput"
-    maxlength="10"
-    inputmode="numeric"
-    placeholder="Enter PNR"
-   >
-
-   <button class="btn" onclick="checkPNR()">
-    Check PNR
-   </button>
-
-   <div id="pnrResult" class="result"></div>
-
-  </div>
-
- </section>
-
- <!-- ALTERNATE -->
- <section id="alternate" class="panel">
-
-  <div class="card">
-
-   <h2>🔄 Alternate Route Finder</h2>
-   <p class="sub">
-    Can't find a good direct option? Let MANIVIK find another way.
-   </p>
-
-   <div class="form-grid">
-    <input id="altFrom" value="Lucknow" placeholder="From">
-    <input id="altTo" value="Puri" placeholder="To">
-   </div>
-
-   <button class="btn" onclick="findAlternates()">
-    Find Alternate Routes
-   </button>
-
-   <div id="altResults" class="result"></div>
-
-  </div>
-
- </section>
-
- <!-- BACKUP -->
- <section id="backup" class="panel">
-
-  <div class="card">
-
-   <h2>🛟 Your Backup Plan</h2>
-
-   <p class="sub">
-    A smart plan if your original ticket doesn't confirm.
-   </p>
-
-   <div class="recommend">
-    💡 MANIVIK recommends keeping a backup ready
-    when confirmation risk is high.
-   </div>
-
-   <div class="option recommended">
-    <div class="option-head">
-     <h3>⭐ Best Chance</h3>
-     <span class="score">91%</span>
+      <div>
+        <div class="brand-name">MANIVIK</div>
+        <div class="tagline">Your Journey. Our Backup.</div>
+      </div>
     </div>
-    <p>Lucknow → Bhubaneswar → Puri</p>
-    <div class="option-bottom">
-     <span>🚆 + 🚕</span>
-     <span>₹2,140</span>
-     <span>+2h 35m</span>
+
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </header>
+
+  <!-- ================= HERO ================= -->
+
+  <section class="hero">
+
+    <div class="hero-badge">
+      ✨ AI Travel Backup Engine
     </div>
-   </div>
 
-   <div class="option">
-    <div class="option-head">
-     <h3>💰 Cheapest</h3>
-     <span class="score">84%</span>
-    </div>
-    <p>Lucknow → Kanpur → Puri</p>
-    <div class="option-bottom">
-     <span>🚆 + 🚆</span>
-     <span>₹1,680</span>
-     <span>+4h 10m</span>
-    </div>
-   </div>
+    <h1>
+      Your ticket is uncertain?
+      <span>We've got a backup.</span>
+    </h1>
 
-   <div class="option">
-    <div class="option-head">
-     <h3>⚡ Fastest</h3>
-     <span class="score">97%</span>
-    </div>
-    <p>Lucknow → Bhubaneswar → Puri</p>
-    <div class="option-bottom">
-     <span>✈️ + 🚕</span>
-     <span>₹5,450</span>
-     <span>Fastest</span>
-    </div>
-   </div>
-
-  </div>
-
- </section>
-
- <div class="card">
-
-  <h2>Why MANIVIK?</h2>
-
-  <div class="feature-grid">
-
-   <div class="feature">
-    <div class="feature-icon">📊</div>
-    <h3>Confirmation Chance</h3>
     <p>
-     Get an estimated probability instead of
-     simply seeing WL/RAC.
+      Check your PNR, estimate confirmation chances and discover
+      smarter alternate travel options.
     </p>
-   </div>
 
-   <div class="feature">
-    <div class="feature-icon">🔄</div>
-    <h3>Alternate Routes</h3>
-    <p>
-     Discover other trains, stations and
-     combinations.
-    </p>
-   </div>
+    <div class="hero-search">
 
-   <div class="feature">
-    <div class="feature-icon">🛟</div>
-    <h3>Backup Plan</h3>
-    <p>
-     Prepare another way to reach your destination
-     before it's too late.
-    </p>
-   </div>
+      <div class="field">
+        <label>FROM</label>
+        <input
+          id="fromStation"
+          type="text"
+          placeholder="Lucknow"
+        />
+      </div>
 
-   <div class="feature">
-    <div class="feature-icon">🔔</div>
-    <h3>Smart Alerts</h3>
-    <p>
-     Future versions can monitor your PNR and
-     notify you about changes.
-    </p>
-   </div>
+      <div class="swap" onclick="swapStations()">
+        ⇄
+      </div>
 
-  </div>
+      <div class="field">
+        <label>TO</label>
+        <input
+          id="toStation"
+          type="text"
+          placeholder="Puri"
+        />
+      </div>
 
- </div>
+      <div class="field">
+        <label>DATE</label>
+        <input
+          id="journeyDate"
+          type="date"
+        />
+      </div>
 
-</main>
+      <button
+        class="primary-btn"
+        onclick="searchTrains()"
+      >
+        🔎 Search Trains
+      </button>
 
-<footer>
- © 2026 MANIVIK · Your Journey. Our Backup.
-<br><br>
-Confirmation percentages shown in this prototype are estimates only.
-</footer>
-
-<script>
-
-function showPanel(id,button){
-
- document.querySelectorAll('.panel')
-  .forEach(p=>p.classList.remove('active'));
-
- document.getElementById(id)
-  .classList.add('active');
-
- document.querySelectorAll('.tab')
-  .forEach(t=>t.classList.remove('active'));
-
- button.classList.add('active');
-
- window.scrollTo({
-  top:document.querySelector('.tabs').offsetTop-10,
-  behavior:'smooth'
- });
-
-}
-
-/* TRAIN SEARCH DEMO */
-
-function searchTrain(){
-
- const from=document.getElementById('from').value || 'Lucknow';
- const to=document.getElementById('to').value || 'Puri';
-
- const box=document.getElementById('trainResults');
-
- box.style.display='block';
-
- box.innerHTML=`
-
- <h3 style="margin-top:18px">
-  Trains: ${from} → ${to}
- </h3>
-
- <div class="train">
-
-  <div class="train-top">
-   <div>
-    <div class="train-name">
-     12876 Neelachal Express
     </div>
-    <small style="color:#687386">
-     Direct Train
+
+  </section>
+
+  <!-- ================= MAIN ================= -->
+
+  <main class="container">
+
+    <!-- NAVIGATION -->
+
+    <div class="tabs">
+
+      <button
+        class="tab active"
+        onclick="showTab('search', this)"
+      >
+        🔎 Search Train
+      </button>
+
+      <button
+        class="tab"
+        onclick="showTab('pnr', this)"
+      >
+        🎫 PNR Status
+      </button>
+
+      <button
+        class="tab"
+        onclick="showTab('alternate', this)"
+      >
+        🔄 Alternate
+      </button>
+
+      <button
+        class="tab"
+        onclick="showTab('backup', this)"
+      >
+        🛟 Backup Plan
+      </button>
+
+    </div>
+
+    <!-- ================= SEARCH TAB ================= -->
+
+    <section
+      id="searchTab"
+      class="tab-content active"
+    >
+
+      <div class="section-title">
+        <div>
+          <h2>Find Your Train</h2>
+          <p>Search trains and check availability.</p>
+        </div>
+
+        <span class="live-badge">
+          ● API READY
+        </span>
+      </div>
+
+      <div id="trainResults">
+
+        <div class="empty-state">
+
+          <div class="empty-icon">🚆</div>
+
+          <h3>Search for your journey</h3>
+
+          <p>
+            Enter your source, destination and journey date
+            to find available trains.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= PNR TAB ================= -->
+
+    <section
+      id="pnrTab"
+      class="tab-content"
+    >
+
+      <div class="section-title">
+
+        <div>
+          <h2>Check PNR Status</h2>
+          <p>Get status and estimated confirmation probability.</p>
+        </div>
+
+      </div>
+
+      <div class="pnr-box">
+
+        <label>10-Digit PNR Number</label>
+
+        <div class="pnr-input-row">
+
+          <input
+            id="pnrInput"
+            type="text"
+            inputmode="numeric"
+            maxlength="10"
+            placeholder="Enter PNR number"
+          />
+
+          <button
+            class="primary-btn"
+            onclick="checkPNR()"
+          >
+            Check PNR
+          </button>
+
+        </div>
+
+        <small>
+          MANIVIK prediction is an estimate and is not a
+          confirmation guarantee.
+        </small>
+
+      </div>
+
+      <div id="pnrResult"></div>
+
+    </section>
+
+    <!-- ================= ALTERNATE TAB ================= -->
+
+    <section
+      id="alternateTab"
+      class="tab-content"
+    >
+
+      <div class="section-title">
+
+        <div>
+          <h2>Alternate Routes</h2>
+
+          <p>
+            If your original ticket looks risky,
+            MANIVIK finds other possibilities.
+          </p>
+        </div>
+
+      </div>
+
+      <div id="alternateResults">
+
+        <div class="empty-state">
+
+          <div class="empty-icon">🔄</div>
+
+          <h3>Find another way</h3>
+
+          <p>
+            MANIVIK can compare alternate stations,
+            trains and mixed travel options.
+          </p>
+
+          <button
+            class="secondary-btn"
+            onclick="loadAlternates()"
+          >
+            Find Alternatives
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= BACKUP TAB ================= -->
+
+    <section
+      id="backupTab"
+      class="tab-content"
+    >
+
+      <div class="backup-hero">
+
+        <div class="backup-icon">
+          🛟
+        </div>
+
+        <div>
+
+          <div class="backup-label">
+            MANIVIK BACKUP ENGINE
+          </div>
+
+          <h2>
+            Don't wait for your ticket.
+          </h2>
+
+          <p>
+            Compare safer travel options before
+            your journey is affected.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div id="backupResults">
+
+        <div class="empty-state">
+
+          <div class="empty-icon">🛟</div>
+
+          <h3>Your backup plan will appear here</h3>
+
+          <p>
+            MANIVIK will compare chance, price,
+            travel time and convenience.
+          </p>
+
+          <button
+            class="primary-btn"
+            onclick="generateBackup()"
+          >
+            Create Backup Plan
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+
+    <section class="how-section">
+
+      <div class="section-title center">
+
+        <div>
+
+          <h2>How MANIVIK Works</h2>
+
+          <p>
+            From uncertain ticket to confident journey.
+          </p>
+
+        </div>
+
+      </div>
+
+      <div class="steps">
+
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <div class="step-icon">🎫</div>
+          <h3>Check</h3>
+          <p>Enter your PNR and journey details.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <div class="step-icon">📊</div>
+          <h3>Predict</h3>
+          <p>MANIVIK estimates confirmation probability.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <div class="step-icon">🔄</div>
+          <h3>Compare</h3>
+          <p>Find alternate trains and routes.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <div class="step-icon">🛟</div>
+          <h3>Backup</h3>
+          <p>Choose the safest travel option.</p>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+
+  <footer>
+
+    <div class="footer-brand">
+      MANIVIK
+    </div>
+
+    <p>
+      Your Journey. Our Backup.
+    </p>
+
+    <div class="footer-line"></div>
+
+    <small>
+      © 2026 MANIVIK. All rights reserved.
     </small>
-   </div>
 
-   <span class="badge">Popular</span>
-  </div>
+    <small class="disclaimer">
+      Confirmation probabilities are estimates and should
+      not be considered guarantees.
+    </small>
 
-  <div class="route">
-   <div>
-    <div class="station">15:10</div>
-    <div class="time">${from}</div>
-   </div>
+  </footer>
 
-   <div class="line"></div>
+  <!-- MOBILE MENU -->
 
-   <div>
-    <div class="station">17:55</div>
-    <div class="time">${to}</div>
-   </div>
-  </div>
+  <div
+    id="mobileMenu"
+    class="mobile-menu"
+  >
 
-  <div class="stats">
-   <div class="stat">
-    <b>26h 45m</b>
-    <span>Duration</span>
-   </div>
+    <button onclick="showTabById('search')">
+      🔎 Search Train
+    </button>
 
-   <div class="stat">
-    <b>3A</b>
-    <span>Class</span>
-   </div>
+    <button onclick="showTabById('pnr')">
+      🎫 PNR Status
+    </button>
 
-   <div class="stat">
-    <b>₹1,850*</b>
-    <span>Est. Fare</span>
-   </div>
-  </div>
+    <button onclick="showTabById('alternate')">
+      🔄 Alternate Route
+    </button>
 
-  <button class="btn" onclick="openBackup()">
-   Check Confirmation & Backup
-  </button>
-
- </div>
-
- <p style="font-size:11px;color:#687386;margin-top:10px">
- *Demo data for MVP prototype.
- </p>
- `;
-
-}
-
-function checkPNR(){
-
- const pnr=document.getElementById('pnrInput').value.trim();
-
- const box=document.getElementById('pnrResult');
-
- box.style.display='block';
-
- if(!/^[0-9]{10}$/.test(pnr)){
-
-  box.innerHTML=`
-   <div class="warning">
-    Please enter a valid 10-digit PNR.
-   </div>
-  `;
-
-  return;
- }
-
- box.innerHTML=`
-
- <div class="pnr-box">
-
-  <div class="pnr-number">${pnr}</div>
-
-  <p style="color:#687386;margin-top:5px">
-   12876 Neelachal Express
-  </p>
-
-  <div class="chance">
-
-   <strong>34%</strong>
-
-   <span>Estimated Chance</span>
+    <button onclick="showTabById('backup')">
+      🛟 Backup Plan
+    </button>
 
   </div>
 
-  <h3 style="color:#f59e0b">
-   🟠 Low Confirmation Probability
-  </h3>
-
-  <div class="stats" style="margin-top:18px">
-
-   <div class="stat">
-    <b>RLWL 7</b>
-    <span>Passenger 1</span>
-   </div>
-
-   <div class="stat">
-    <b>RLWL 8</b>
-    <span>Passenger 2</span>
-   </div>
-
-   <div class="stat">
-    <b>RLWL 9</b>
-    <span>Passenger 3</span>
-   </div>
-
-  </div>
-
-  <div class="warning">
-   ⚠️ This is an estimated prediction,
-   not a confirmation guarantee.
-  </div>
-
-  <div class="recommend">
-   🛟 Backup Plan Recommended
-  </div>
-
-  <button class="btn" onclick="openBackup()">
-   Find My Backup
-  </button>
-
- </div>
- `;
-
-}
-
-function findAlternates(){
-
- const from=document.getElementById('altFrom').value || 'Lucknow';
- const to=document.getElementById('altTo').value || 'Puri';
-
- const box=document.getElementById('altResults');
-
- box.style.display='block';
-
- box.innerHTML=`
-
- <h3 style="margin-top:18px">
-  Backup routes for ${from} → ${to}
- </h3>
-
- <div class="option recommended">
-
-  <div class="option-head">
-   <h3>⭐ Best Chance</h3>
-   <span class="score">91%</span>
-  </div>
-
-  <p>${from} → Bhubaneswar → ${to}</p>
-
-  <div class="option-bottom">
-   <span>🚆 + 🚕</span>
-   <span>₹2,140</span>
-   <span>+2h 35m</span>
-  </div>
-
- </div>
-
- <div class="option">
-
-  <div class="option-head">
-   <h3>💰 Cheapest</h3>
-   <span class="score">84%</span>
-  </div>
-
-  <p>${from} → Kanpur → ${to}</p>
-
-  <div class="option-bottom">
-   <span>🚆 + 🚆</span>
-   <span>₹1,680</span>
-   <span>+4h 10m</span>
-  </div>
-
- </div>
-
- <div class="option">
-
-  <div class="option-head">
-   <h3>⚡ Fastest</h3>
-   <span class="score">97%</span>
-  </div>
-
-  <p>${from} → Bhubaneswar → ${to}</p>
-
-  <div class="option-bottom">
-   <span>✈️ + 🚕</span>
-   <span>₹5,450</span>
-   <span>Fastest</span>
-  </div>
-
- </div>
- `;
-
-}
-
-function openBackup(){
-
- document.querySelectorAll('.panel')
-  .forEach(p=>p.classList.remove('active'));
-
- document.getElementById('backup')
-  .classList.add('active');
-
- document.querySelectorAll('.tab')
-  .forEach(t=>t.classList.remove('active'));
-
- document.querySelectorAll('.tab')[3]
-  .classList.add('active');
-
- window.scrollTo({
-  top:document.querySelector('.tabs').offsetTop-10,
-  behavior:'smooth'
- });
-
-}
-
-</script>
+  <script src="app.js"></script>
 
 </body>
 </html>
